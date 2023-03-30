@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "game-scene"
 version = "0.1.0"
-description = "Part of Spichki Game project"
+description = "Part of the Spichki Game project"
 authors = ["SciBourne <bourne-sci-hack@yandex.ru>"]
 license = "GPLv3"
 readme = "README.md"
