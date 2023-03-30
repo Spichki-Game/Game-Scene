@@ -1,6 +1,6 @@
 # Game Scene
 
-Game Scene is a part of Spichki Game project.
+Game Scene is a part of the Spichki Game project.
 This microservice provide gPRC API (see [proto](url)).
 
 
