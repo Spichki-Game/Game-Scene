@@ -8,7 +8,11 @@ class SetMatches:
 
     @number.setter
     def number(self, new_number: int) -> None:
-        assert 0 <= new_number
+        if new_number < 0:
+            raise RuntimeError(
+                "Number of matches cannot be less than zero"
+            )
+
         self.__number = new_number
 
 
