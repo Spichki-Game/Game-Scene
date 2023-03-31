@@ -59,9 +59,25 @@ class GameMatch:
         return self.__move.name if self.__move else None
 
     def add_players(self, *names: str) -> None:
-        assert not self.__winner
-        assert not self.__move
-        assert len(names) == len(set(names))
+        if self.__winner:
+            raise RuntimeError(
+                "You can't add players after finish"
+            )
+
+        if self.__move:
+            raise RuntimeError(
+                "You can't add players during the game"
+            )
+
+        if len(names) != len(set(names)):
+            raise RuntimeError(
+                "Non-unique player names"
+            )
+
+        if len(names) + len(self.__players) > 10:
+            raise RuntimeError(
+                "No more than 10 players are allowed"
+            )
 
         for name in names:
             self.__players.append(
@@ -69,23 +85,44 @@ class GameMatch:
             )
 
     def start(self) -> None:
-        assert not self.__winner
-        assert not self.__move
-        assert len(self.__players) > 2
+        if self.__winner:
+            raise RuntimeError(
+                "You can't start the same game after finish"
+            )
+
+        if self.__move:
+            raise RuntimeError(
+                "You can't restart during the game"
+            )
+
+        if len(self.__players) < 2:
+            raise RuntimeError(
+                "At least 2 players are needed for start the game"
+            )
 
         self.__set_random_num_matches()
         self.__random_shuffle_players()
         self.__set_next_move()
 
     def make_move(self, num_matches: int) -> None:
-        assert self.__move
-        assert 1 <= num_matches <= 3
+        if not self.__move:
+            raise RuntimeError(
+                "The player is allowed to make move only during the game"
+            )
+
+        if not 1 <= num_matches <= 3:
+            raise RuntimeError(
+                "The player is allowed to take from 1 to 3 matches"
+            )
 
         self.__move.take_matches(num_matches)
         self.__set_next_move() if self.__matches.number else self.stop()
 
     def stop(self) -> None:
-        assert not self.__winner
+        if self.__winner:
+            raise RuntimeError(
+                "You can't stop the game when the game is already stopped"
+            )
 
         if self.__matches.number == 0:
             self.__winner = self.__move
