@@ -1,3 +1,6 @@
+from typing import Any
+
+
 class SetMatches:
     def __init__(self):
         self.__number: int | None = None
@@ -17,9 +20,12 @@ class SetMatches:
 
 
 class Player:
-    def __init__(self, name: str, matches: 'SetMatches'):
+    def __init__(self, name: str, matches: SetMatches):
         self.__name = name
         self.__matches = matches
+
+    def __eq__(self, other: Any) -> bool:
+        return True if self.__name == other else False
 
     @property
     def name(self) -> str:
