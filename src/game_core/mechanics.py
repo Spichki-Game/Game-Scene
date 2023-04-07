@@ -1,11 +1,11 @@
 from secrets import SystemRandom
 from itertools import cycle
 
-from game_core.models import SetMatches, Player
+from .models import SetMatches, Player
 
 
 class GameMatch:
-    RNG: 'SystemRandom' = SystemRandom('game')
+    RNG: 'SystemRandom' = SystemRandom()
 
     def __init__(self):
         self.__matches: 'SetMatches' = SetMatches()
@@ -13,6 +13,7 @@ class GameMatch:
         self.__outsiders: list['Player'] = []
         self.__move: 'Player' | None = None
         self.__winner: 'Player' | None = None
+        self.__cycle_players: cycle | None = None
 
     def __set_random_num_matches(self) -> None:
         num_min = len(self.__players) * 10
@@ -25,13 +26,10 @@ class GameMatch:
         self.RNG.shuffle(self.__players)
 
     def __set_next_move(self) -> None:
-        if not self.__set_next_move.__dict__:
-            self.__set_next_move.__dict__.update(
-                players=cycle(self.__players)
-            )
+        self.__move = next(self.__cycle_players)
 
         for _ in self.__players:
-            next_move = next(self.__set_next_move.players)
+            next_move = next(self.__cycle_players)
             if next_move in self.__outsiders:
                 continue
             else:
@@ -48,7 +46,7 @@ class GameMatch:
 
     @property
     def outsiders(self) -> list[str]:
-        return [self.__outsiders.name for outsider in self.__outsiders]
+        return [outsider.name for outsider in self.__outsiders]
 
     @property
     def winner(self) -> str | None:
@@ -61,12 +59,12 @@ class GameMatch:
     def add_players(self, *names: str) -> None:
         if self.__winner:
             raise RuntimeError(
-                "You can't add players after finish"
+                "You cannot add players after finish"
             )
 
         if self.__move:
             raise RuntimeError(
-                "You can't add players during the game"
+                "You cannot add players during the game"
             )
 
         if len(names) != len(set(names)):
@@ -87,12 +85,12 @@ class GameMatch:
     def start(self) -> None:
         if self.__winner:
             raise RuntimeError(
-                "You can't start the same game after finish"
+                "You cannot start the same game after finish"
             )
 
         if self.__move:
             raise RuntimeError(
-                "You can't restart during the game"
+                "You cannot restart during the game"
             )
 
         if len(self.__players) < 2:
@@ -102,6 +100,8 @@ class GameMatch:
 
         self.__set_random_num_matches()
         self.__random_shuffle_players()
+
+        self.__cycle_players = cycle(self.__players)
         self.__set_next_move()
 
     def make_move(self, num_matches: int) -> None:
@@ -118,19 +118,34 @@ class GameMatch:
         self.__move.take_matches(num_matches)
         self.__set_next_move() if self.__matches.number else self.stop()
 
-    def stop(self) -> None:
+    def stop(self, player_name: str | None = None) -> None:
         if self.__winner:
             raise RuntimeError(
-                "You can't stop the game when the game is already stopped"
+                "You cannot stop the game when the game is already stopped"
             )
 
         if self.__matches.number == 0:
             self.__winner = self.__move
-        elif len(self.__players) > 2:
-            self.__outsiders.append(self.__move)
-            self.__set_next_move()
-        else:
-            self.__set_next_move()
-            self.__winner = self.__move
+            self.__move = None
 
-        self.__move = None
+        elif player_name:
+            if len(self.__players) > 2:
+                self.__outsiders.append(
+                    self.__players[
+                        self.__players.index(player_name)
+                    ]
+                )
+
+                if player_name == self.__move:
+                    self.__set_next_move()
+
+            else:
+                if player_name == self.__move:
+                    self.__set_next_move()
+
+                self.__winner = self.__move
+
+        else:
+            raise RuntimeError(
+                "You cannot stop the game for all players now"
+            )
