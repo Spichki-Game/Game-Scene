@@ -3,7 +3,7 @@ import asyncio
 
 import grpc_api_generator
 
-if grpc_api_generator.run('Game-Scene'):
+if grpc_api_generator.run(project_name='Game-Scene', api_name='game_scene'):
     from grpc_api import game_scene_pb2_grpc as srv
     from grpc_api import game_scene_pb2 as msg
 
