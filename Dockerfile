@@ -37,6 +37,6 @@ RUN poetry install
 
 RUN chown -hR game-scene /srv/Game-Scene
 USER game-scene:game-scene
-CMD poetry run server
 
-EXPOSE 5150/tcp
+EXPOSE 50051/tcp
+CMD poetry run server
