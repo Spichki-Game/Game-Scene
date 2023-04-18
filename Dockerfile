@@ -15,28 +15,20 @@ ENV PYTHONDONTWRITEBYTECODE 1
 
 
 WORKDIR /srv/Game-Scene
-RUN useradd game-scene
 
-RUN apt-get update
-RUN apt-get -y upgrade
-RUN apt-get -y install lsb-release
-RUN apt-get -y install git
+RUN useradd game-scene && \
+    apt-get update && \
+    apt-get -y upgrade && \
+    apt-get -y install lsb-release && \
+    apt-get -y install git && \
+    apt-get -y install redis
 
-RUN apt-get -y install redis
-RUN service redis-server start
+COPY --chown=game-scene:game-scene . ./
 
+RUN pip install poetry && \
+    poetry config virtualenvs.in-project true && \
+    poetry install
 
-COPY src src
-COPY pyproject.toml ./
-COPY README.md ./
-COPY LICENSE ./
-
-RUN pip install poetry
-RUN poetry config virtualenvs.in-project true
-RUN poetry install
-
-RUN chown -hR game-scene /srv/Game-Scene
-USER game-scene:game-scene
 
 EXPOSE 50051/tcp
-CMD poetry run server
+ENTRYPOINT ["/srv/Game-Scene/startup-service.sh"]
