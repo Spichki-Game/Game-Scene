@@ -3,9 +3,8 @@ import asyncio
 
 import grpc_api_generator
 
-if grpc_api_generator.run(project_name='Game-Scene', api_name='game_scene'):
-    from grpc_api import game_scene_pb2_grpc as srv
-    from grpc_api import game_scene_pb2 as msg
+from grpc_api import game_scene_pb2_grpc as srv
+from grpc_api import game_scene_pb2 as msg
 
 from game_core import GameMatch
 
@@ -39,7 +38,7 @@ class GameScene(srv.GameSceneServicer):
         game.start()
         write_session(players.session_id, game)
 
-        return players.session_id, game
+        return game
 
     @format_return()
     async def Move(self,
@@ -51,7 +50,7 @@ class GameScene(srv.GameSceneServicer):
         game.make_move(matches.number)
         write_session(matches.session_id, game)
 
-        return matches.session_id, game
+        return game
 
     @format_return()
     async def Leave(self,
@@ -63,7 +62,7 @@ class GameScene(srv.GameSceneServicer):
         game.stop(player.name)
         write_session(player.session_id, game)
 
-        return player.session_id, game
+        return game
 
     @format_return(selective_state=True)
     async def Get(self,
@@ -80,7 +79,6 @@ class GameScene(srv.GameSceneServicer):
                    context: grpc.aio.ServicerContext) -> msg.Response:
 
         end_session(game.session_id)
-        return game.session_id, None
 
 
 async def game_scene_server() -> None:
