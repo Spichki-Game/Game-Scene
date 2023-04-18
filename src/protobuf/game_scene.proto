@@ -49,10 +49,9 @@ message Game {
 
 message Response {
   bool confirm_status = 1;
-  string session_id = 2;
   oneof select {
-    ResponseState state_body = 3;
-    ResponseError error_body = 4;
+    ResponseState state_body = 2;
+    ResponseError error_body = 3;
   }
 }
 
