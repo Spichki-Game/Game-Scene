@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from grpc_api import game_scene_pb2 as game__scene__pb2
+from grpc_api import game_scene_pb2 as src_dot_protobuf_dot_game__scene__pb2
 
 
 class GameSceneStub(object):
@@ -18,28 +18,28 @@ class GameSceneStub(object):
         """
         self.Start = channel.unary_unary(
                 '/game_scene.GameScene/Start',
-                request_serializer=game__scene__pb2.Players.SerializeToString,
-                response_deserializer=game__scene__pb2.Response.FromString,
+                request_serializer=src_dot_protobuf_dot_game__scene__pb2.Players.SerializeToString,
+                response_deserializer=src_dot_protobuf_dot_game__scene__pb2.Response.FromString,
                 )
         self.Move = channel.unary_unary(
                 '/game_scene.GameScene/Move',
-                request_serializer=game__scene__pb2.Matches.SerializeToString,
-                response_deserializer=game__scene__pb2.Response.FromString,
+                request_serializer=src_dot_protobuf_dot_game__scene__pb2.Matches.SerializeToString,
+                response_deserializer=src_dot_protobuf_dot_game__scene__pb2.Response.FromString,
                 )
         self.Leave = channel.unary_unary(
                 '/game_scene.GameScene/Leave',
-                request_serializer=game__scene__pb2.Player.SerializeToString,
-                response_deserializer=game__scene__pb2.Response.FromString,
+                request_serializer=src_dot_protobuf_dot_game__scene__pb2.Player.SerializeToString,
+                response_deserializer=src_dot_protobuf_dot_game__scene__pb2.Response.FromString,
                 )
         self.Get = channel.unary_unary(
                 '/game_scene.GameScene/Get',
-                request_serializer=game__scene__pb2.RequestState.SerializeToString,
-                response_deserializer=game__scene__pb2.Response.FromString,
+                request_serializer=src_dot_protobuf_dot_game__scene__pb2.RequestState.SerializeToString,
+                response_deserializer=src_dot_protobuf_dot_game__scene__pb2.Response.FromString,
                 )
         self.Stop = channel.unary_unary(
                 '/game_scene.GameScene/Stop',
-                request_serializer=game__scene__pb2.Game.SerializeToString,
-                response_deserializer=game__scene__pb2.Response.FromString,
+                request_serializer=src_dot_protobuf_dot_game__scene__pb2.Game.SerializeToString,
+                response_deserializer=src_dot_protobuf_dot_game__scene__pb2.Response.FromString,
                 )
 
 
@@ -83,28 +83,28 @@ def add_GameSceneServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Start': grpc.unary_unary_rpc_method_handler(
                     servicer.Start,
-                    request_deserializer=game__scene__pb2.Players.FromString,
-                    response_serializer=game__scene__pb2.Response.SerializeToString,
+                    request_deserializer=src_dot_protobuf_dot_game__scene__pb2.Players.FromString,
+                    response_serializer=src_dot_protobuf_dot_game__scene__pb2.Response.SerializeToString,
             ),
             'Move': grpc.unary_unary_rpc_method_handler(
                     servicer.Move,
-                    request_deserializer=game__scene__pb2.Matches.FromString,
-                    response_serializer=game__scene__pb2.Response.SerializeToString,
+                    request_deserializer=src_dot_protobuf_dot_game__scene__pb2.Matches.FromString,
+                    response_serializer=src_dot_protobuf_dot_game__scene__pb2.Response.SerializeToString,
             ),
             'Leave': grpc.unary_unary_rpc_method_handler(
                     servicer.Leave,
-                    request_deserializer=game__scene__pb2.Player.FromString,
-                    response_serializer=game__scene__pb2.Response.SerializeToString,
+                    request_deserializer=src_dot_protobuf_dot_game__scene__pb2.Player.FromString,
+                    response_serializer=src_dot_protobuf_dot_game__scene__pb2.Response.SerializeToString,
             ),
             'Get': grpc.unary_unary_rpc_method_handler(
                     servicer.Get,
-                    request_deserializer=game__scene__pb2.RequestState.FromString,
-                    response_serializer=game__scene__pb2.Response.SerializeToString,
+                    request_deserializer=src_dot_protobuf_dot_game__scene__pb2.RequestState.FromString,
+                    response_serializer=src_dot_protobuf_dot_game__scene__pb2.Response.SerializeToString,
             ),
             'Stop': grpc.unary_unary_rpc_method_handler(
                     servicer.Stop,
-                    request_deserializer=game__scene__pb2.Game.FromString,
-                    response_serializer=game__scene__pb2.Response.SerializeToString,
+                    request_deserializer=src_dot_protobuf_dot_game__scene__pb2.Game.FromString,
+                    response_serializer=src_dot_protobuf_dot_game__scene__pb2.Response.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -130,8 +130,8 @@ class GameScene(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/game_scene.GameScene/Start',
-            game__scene__pb2.Players.SerializeToString,
-            game__scene__pb2.Response.FromString,
+            src_dot_protobuf_dot_game__scene__pb2.Players.SerializeToString,
+            src_dot_protobuf_dot_game__scene__pb2.Response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -147,8 +147,8 @@ class GameScene(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/game_scene.GameScene/Move',
-            game__scene__pb2.Matches.SerializeToString,
-            game__scene__pb2.Response.FromString,
+            src_dot_protobuf_dot_game__scene__pb2.Matches.SerializeToString,
+            src_dot_protobuf_dot_game__scene__pb2.Response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -164,8 +164,8 @@ class GameScene(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/game_scene.GameScene/Leave',
-            game__scene__pb2.Player.SerializeToString,
-            game__scene__pb2.Response.FromString,
+            src_dot_protobuf_dot_game__scene__pb2.Player.SerializeToString,
+            src_dot_protobuf_dot_game__scene__pb2.Response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -181,8 +181,8 @@ class GameScene(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/game_scene.GameScene/Get',
-            game__scene__pb2.RequestState.SerializeToString,
-            game__scene__pb2.Response.FromString,
+            src_dot_protobuf_dot_game__scene__pb2.RequestState.SerializeToString,
+            src_dot_protobuf_dot_game__scene__pb2.Response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -198,7 +198,7 @@ class GameScene(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/game_scene.GameScene/Stop',
-            game__scene__pb2.Game.SerializeToString,
-            game__scene__pb2.Response.FromString,
+            src_dot_protobuf_dot_game__scene__pb2.Game.SerializeToString,
+            src_dot_protobuf_dot_game__scene__pb2.Response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
