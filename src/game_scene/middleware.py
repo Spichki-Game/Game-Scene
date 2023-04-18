@@ -65,7 +65,7 @@ def format_return(selective_state: bool = False,
         ) -> msg.Response:
 
             try:
-                session_id, game = await method(self, request, context)
+                game = await method(self, request, context)
 
             except Exception as err:
                 str_name = err.__class__.__name__
@@ -73,7 +73,6 @@ def format_return(selective_state: bool = False,
 
                 return msg.Response(
                     confirm_status=False,
-                    session_id=request.session_id,
                     error_body=msg.ResponseError(
                         err_msg=(
                             f"[ {str_name} ]: {str_msg}"
@@ -83,8 +82,7 @@ def format_return(selective_state: bool = False,
 
             if end_response:
                 return msg.Response(
-                    confirm_status=True,
-                    session_id=session_id
+                    confirm_status=True
                 )
 
             elif selective_state:
@@ -138,7 +136,6 @@ def format_return(selective_state: bool = False,
 
             return msg.Response(
                 confirm_status=True,
-                session_id=session_id,
                 state_body=msg.ResponseState(
                     **game_state
                 )
