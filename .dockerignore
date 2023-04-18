@@ -1,0 +1,22 @@
+#---  DIRECTORIES  ---#
+
+
+.git
+docs
+tests
+*/*/__pycache__
+
+
+#---     FILES     ---#
+
+
+.dockerignore
+.gitignore
+.projectile
+Dockerfile
+docker
+docker.sh
+poetry.lock
+!.#.*
+*/!.#.*
+*/*/!.#.*
