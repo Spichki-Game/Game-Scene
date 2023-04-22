@@ -71,7 +71,7 @@ def format_return(selective_state: bool = False,
                 return msg.Response(
                     confirm_status=False,
                     error_body=msg.ResponseError(
-                        error_type=err.__class__.__name__
+                        error_type=err.__class__.__name__,
                         error_msg=err.__str__()
                     )
                 )
