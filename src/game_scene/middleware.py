@@ -68,15 +68,11 @@ def format_return(selective_state: bool = False,
                 game = await method(self, request, context)
 
             except Exception as err:
-                str_name = err.__class__.__name__
-                str_msg = err.__str__()
-
                 return msg.Response(
                     confirm_status=False,
                     error_body=msg.ResponseError(
-                        err_msg=(
-                            f"[ {str_name} ]: {str_msg}"
-                        )
+                        error_type=err.__class__.__name__
+                        error_msg=err.__str__()
                     )
                 )
 
