@@ -90,7 +90,7 @@ class GameMatch:
 
         if self.__move:
             raise RuntimeError(
-                "You cannot restart during the game"
+                "You cannot restart the game"
             )
 
         if len(self.__players) < 2:
