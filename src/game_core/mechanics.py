@@ -1,6 +1,4 @@
 from secrets import SystemRandom
-from itertools import cycle
-
 from .models import SetMatches, Player
 
 
@@ -13,7 +11,6 @@ class GameMatch:
         self.__outsiders: list['Player'] = []
         self.__move: 'Player' | None = None
         self.__winner: 'Player' | None = None
-        self.__cycle_players: cycle | None = None
 
     def __set_random_num_matches(self) -> None:
         num_min = len(self.__players) * 10
@@ -26,15 +23,26 @@ class GameMatch:
         self.RNG.shuffle(self.__players)
 
     def __set_next_move(self) -> None:
-        self.__move = next(self.__cycle_players)
+        next_index = self.__players.index(self.__move) + 1
 
-        for _ in self.__players:
-            next_move = next(self.__cycle_players)
-            if next_move in self.__outsiders:
-                continue
-            else:
-                self.__move = next_move
-                break
+        if next_index == len(self.__players):
+            next_index = 0
+
+        self.__move = self.__players[next_index]
+
+    def __stop(self) -> None:
+        if self.__winner:
+            raise RuntimeError(
+                "You cannot stop the game when the game is already stopped"
+            )
+
+        if self.__matches.number == 0 or len(self.__players) == 1:
+            self.__winner = self.__move
+            self.__move = None
+        else:
+            raise RuntimeError(
+                "You cannot stop the game now"
+            )
 
     @property
     def matches(self) -> int | None:
@@ -101,8 +109,7 @@ class GameMatch:
         self.__set_random_num_matches()
         self.__random_shuffle_players()
 
-        self.__cycle_players = cycle(self.__players)
-        self.__set_next_move()
+        self.__move = self.__players[0]
 
     def make_move(self, num_matches: int) -> None:
         if not self.__move:
@@ -116,36 +123,27 @@ class GameMatch:
             )
 
         self.__move.take_matches(num_matches)
-        self.__set_next_move() if self.__matches.number else self.stop()
+        self.__set_next_move() if self.__matches.number else self.__stop()
 
-    def stop(self, player_name: str | None = None) -> None:
+    def leave_player(self, player_name: str) -> None:
         if self.__winner:
             raise RuntimeError(
-                "You cannot stop the game when the game is already stopped"
+                "You cannot leave when the game is stopped"
             )
 
-        if self.__matches.number == 0:
-            self.__winner = self.__move
-            self.__move = None
-
-        elif player_name:
-            if len(self.__players) > 2:
-                self.__outsiders.append(
-                    self.__players[
-                        self.__players.index(player_name)
-                    ]
-                )
-
-                if player_name == self.__move:
-                    self.__set_next_move()
-
-            else:
-                if player_name == self.__move:
-                    self.__set_next_move()
-
-                self.__winner = self.__move
-
-        else:
+        if player_name not in self.__players:
             raise RuntimeError(
-                "You cannot stop the game for all players now"
+                "Invalid the player name"
             )
+
+        if player_name == self.__move:
+            self.__set_next_move()
+
+        self.__outsiders.append(
+            self.__players.pop(
+                self.__players.index(player_name)
+            )
+        )
+
+        if len(self.__players) == 1:
+            self.__stop()
