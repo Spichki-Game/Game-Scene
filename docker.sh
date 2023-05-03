@@ -20,10 +20,25 @@ function create_container() {
 }
 
 
+function print_images() {
+    echo ""
+    docker images
+    echo ""
+}
+
+
+function print_containers() {
+    echo ""
+    docker ps -a
+    echo ""
+}
+
+
 function help() {
     echo ""
     echo " Available parameters:"
     echo ""
+    echo "    --build"
     echo "    --build-image"
     echo "    --create-container"
     echo "    --help"
@@ -33,12 +48,19 @@ function help() {
 
 if [ -n "$1" ]
 then
-   case "$1" in
-       --build-image) build_image;;
-       --create-container) create_container;;
-       --help) help;;
-       *) echo "[ ERROR ]: Unknown parameter '${1}', use --help";;
-   esac
+    case "$1" in
+	--build)
+	    build_image
+	    create_container
+	    print_images
+	    print_containers
+	    ;;
+
+	--build-image) build_image;;
+	--create-container) create_container;;
+	--help) help;;
+	*) echo "[ ERROR ]: Unknown parameter '${1}', use --help";;
+    esac
 else
     echo "[ ERROR ]: Expected parameter, use --help"
 fi
