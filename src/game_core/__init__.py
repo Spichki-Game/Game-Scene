@@ -19,7 +19,7 @@ Class: GameAPI
 + add_players(*names: str) -> None
 + make_move(num_matches: int) -> None
 + start() -> None
-+ stop() -> None
++ leave_player() -> None
 
 """
 
