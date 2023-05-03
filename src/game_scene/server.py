@@ -1,8 +1,6 @@
 import grpc
 import asyncio
 
-import grpc_api_generator
-
 from grpc_api import game_scene_pb2_grpc as srv
 from grpc_api import game_scene_pb2 as msg
 
@@ -10,8 +8,8 @@ from game_core import GameMatch
 
 from .middleware import (
     format_return,
-    check_session_exists,
-    check_winner_game
+    check_session_not_exists,
+    check_session_exists
 )
 
 from .accessor import (
@@ -27,7 +25,7 @@ LISTEN_ADDR = '[::]:50051'
 class GameScene(srv.GameSceneServicer):
 
     @format_return()
-    @check_session_exists
+    @check_session_not_exists
     async def Start(self,
                     players: msg.Players,
                     context: grpc.aio.ServicerContext) -> msg.Response:
@@ -41,6 +39,7 @@ class GameScene(srv.GameSceneServicer):
         return game
 
     @format_return()
+    @check_session_exists
     async def Move(self,
                    matches: msg.Matches,
                    context: grpc.aio.ServicerContext) -> msg.Response:
@@ -53,27 +52,29 @@ class GameScene(srv.GameSceneServicer):
         return game
 
     @format_return()
+    @check_session_exists
     async def Leave(self,
                     player: msg.Player,
                     context: grpc.aio.ServicerContext) -> msg.Response:
 
         game = read_session(player.session_id)
 
-        game.stop(player.name)
+        game.leave_player(player.name)
         write_session(player.session_id, game)
 
         return game
 
     @format_return(selective_state=True)
+    @check_session_exists
     async def Get(self,
                   request_state: msg.RequestState,
                   context: grpc.aio.ServicerContext) -> msg.Response:
 
         game = read_session(request_state.session_id)
-        return request_state.session_id, game
+        return game
 
     @format_return(end_response=True)
-    @check_winner_game
+    @check_session_exists
     async def Stop(self,
                    game: msg.Game,
                    context: grpc.aio.ServicerContext) -> msg.Response:
