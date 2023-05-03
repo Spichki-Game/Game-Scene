@@ -11,43 +11,34 @@ if typing.TYPE_CHECKING:
     from game_core import GameMatch
 
 
-def check_session_exists(method: Callable) -> Callable:
+class GameSessionError(Exception):
+    pass
+
+
+def check_session_not_exists(method: Callable) -> Callable:
     @wraps(method)
-    async def wrapper(
-
-            self,
-            request: msg.Players,
-            context: 'grpc.aio.ServicerContext'
-
-    ) -> tuple[str, 'GameMatch']:
+    async def wrapper(self,
+                      request: msg.Players,
+                      context: 'grpc.aio.ServicerContext') -> 'GameMatch':
 
         game = read_session(request.session_id)
-
-        if game:
-            game.start()
-        else:
-            return await method(self, request, context)
+        return game.start() if game else await method(self, request, context)
 
     return wrapper
 
 
-def check_winner_game(method: Callable) -> Callable:
+def check_session_exists(method: Callable) -> Callable:
     @wraps(method)
-    async def wrapper(
+    async def wrapper(self,
+                      request: Any,
+                      context: 'grpc.aio.ServicerContext') -> 'GameMatch':
 
-            self,
-            request: msg.Game,
-            context: 'grpc.aio.ServicerContext'
+        if not read_session(request.session_id):
+            raise GameSessionError(
+                "The game session not found"
+            )
 
-    ) -> tuple[str, 'GameMatch']:
-
-        game = read_session(request.session_id)
-
-        if game.winner:
-            return await method(self, request, context)
-        else:
-            game.stop()
-
+        return await method(self, request, context)
     return wrapper
 
 
@@ -56,14 +47,9 @@ def format_return(selective_state: bool = False,
 
     def decorator(method: Callable) -> Callable:
         @wraps(method)
-        async def wrapper(
-
-                self,
-                request: Any,
-                context: 'grpc.aio.ServicerContext'
-
-        ) -> msg.Response:
-
+        async def wrapper(self,
+                          request: Any,
+                          context: 'grpc.aio.ServicerContext') -> msg.Response:
             try:
                 game = await method(self, request, context)
 
@@ -71,8 +57,10 @@ def format_return(selective_state: bool = False,
                 return msg.Response(
                     confirm_status=False,
                     error_body=msg.ResponseError(
+
                         error_type=err.__class__.__name__,
                         error_msg=err.__str__()
+
                     )
                 )
 
@@ -96,29 +84,19 @@ def format_return(selective_state: bool = False,
                             )
 
                         case msg.STATE_MATCHES:
-                            game_state.update(
-                                matches=game.matches
-                            )
+                            game_state.update(matches=game.matches)
 
                         case msg.STATE_MOVE:
-                            game_state.update(
-                                move=game.move
-                            )
+                            game_state.update(move=game.move)
 
                         case msg.STATE_WINNER:
-                            game_state.update(
-                                winner=game.winner
-                            )
+                            game_state.update(winner=game.winner)
 
                         case msg.STATE_PLAYERS:
-                            game_state.update(
-                                players=game.players
-                            )
+                            game_state.update(players=game.players)
 
                         case msg.STATE_OUTSIDERS:
-                            game_state.update(
-                                outsiders=game.outsiders
-                            )
+                            game_state.update(outsiders=game.outsiders)
 
             else:
 
